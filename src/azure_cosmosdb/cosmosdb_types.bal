@@ -16,7 +16,7 @@ public type ResourceProperties record {|
 
 public type Database record {|
     string id = "";
-    string _rid?;
+    string? _rid = ();
     string _self?;
     Headers?...;
 |};
@@ -142,6 +142,53 @@ public type Trigger record {|
 public type TriggerList record {|
     string _rid = "";
     Trigger[] triggers = [];
+    int _count = 0;
+    Headers?...;
+|};
+
+public type User  record {|
+    *Database;
+    Headers?...;
+|};
+
+public type UserList  record {|
+    string _rid = "";
+    User[] users = [];
+    int _count = 0;
+    Headers? reponseHeaders = ();
+|};
+
+public type Permission record {|
+    string? _rid?;
+    string id = "";
+    string permissionMode = "";
+    string 'resource = "";
+    int ttl?;
+    string? _token = ();
+    Headers?...;
+|};
+
+public type PermissionList  record {|
+    string _rid = "";
+    Permission[] permissions = [];
+    int _count = 0;
+    Headers? reponseHeaders = ();
+|};
+
+public type Offer record {|
+    string id = "";
+    string _rid = "";
+    string offerVersion = "";
+    string? offerType = ();  
+    json content = {};
+    string 'resource = "";
+    string offerResourceId = "";
+    Headers?...;
+|};
+
+public type OfferList record {|
+    string _rid = "";
+    Offer[] offers = [];
     int _count = 0;
     Headers?...;
 |};

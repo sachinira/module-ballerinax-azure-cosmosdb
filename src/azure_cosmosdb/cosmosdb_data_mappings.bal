@@ -8,6 +8,14 @@ isolated function mapParametersToHeaderType(string httpVerb, string url) returns
     return params;
 }
 
+isolated function mapOfferHeaderType(string httpVerb, string url) returns HeaderParameters {
+    HeaderParameters params = {};
+    params.verb = httpVerb;
+    params.resourceType = getResourceType(url);
+    params.resourceId = getResourceIdForOffer(url);
+    return params;
+}
+
 isolated function mapResponseHeadersToObject(http:Response|http:ClientError httpResponse) returns @tainted Headers|error 
 {
     Headers responseHeaders = {};
@@ -248,6 +256,89 @@ isolated function mapJsonToTriggerListType([json, Headers] jsonPayload) returns 
     return triggerlist;
 }
 
+isolated function mapJsonToUserType([json, Headers?] jsonPayload) returns @tainted User {
+    User user = {};
+    json payload;
+    Headers? headers;
+    [payload,headers] = jsonPayload;
+    user._rid = payload._rid != () ? payload._rid.toString() : EMPTY_STRING;
+    user.id = payload.id != () ? payload.id.toString() : EMPTY_STRING;
+    if headers is Headers {
+        user["reponseHeaders"] = headers;
+    }
+    return user;
+}
+
+isolated function mapJsonToUserListType([json, Headers?] jsonPayload) returns @tainted UserList {
+    UserList userlist = {};
+    json payload;
+    Headers? headers;
+    [payload,headers] = jsonPayload;
+    userlist._rid = payload._rid != () ? payload._rid.toString() : EMPTY_STRING;
+    userlist.users = ConvertToUserArray(<json[]>payload.Users);
+    userlist._count = convertToInt(payload._count);
+    userlist["reponseHeaders"] = headers;
+    return userlist;
+}
+
+isolated function mapJsonToPermissionType([json, Headers?] jsonPayload) returns @tainted Permission {
+    Permission permission = {};
+    json payload;
+    Headers? headers;
+    [payload,headers] = jsonPayload;
+    permission.id = payload.id != () ? payload.id.toString() : EMPTY_STRING;
+    permission._rid = payload._rid != () ? payload._rid.toString() : EMPTY_STRING;
+    permission._token = payload._token != () ? payload._token.toString() : EMPTY_STRING;
+    permission.permissionMode = payload.permissionMode != () ? payload.permissionMode.toString() : EMPTY_STRING;
+    permission.'resource = payload.'resource != () ? payload.'resource.toString() : EMPTY_STRING;
+    if headers is Headers {
+        permission["reponseHeaders"] = headers;
+    }
+    return permission;
+}
+
+isolated function mapJsonToPermissionListType([json, Headers?] jsonPayload) returns @tainted PermissionList {
+    PermissionList permissionList = {};
+    json payload;
+    Headers? headers;
+    [payload,headers] = jsonPayload;
+    permissionList._rid = payload._rid != () ? payload._rid.toString() : EMPTY_STRING;
+    permissionList.permissions = ConvertToPermissionArray(<json[]>payload.Permissions);
+    permissionList._count = convertToInt(payload._count);
+    permissionList["reponseHeaders"] = headers;
+    return permissionList;
+}
+
+isolated function mapJsonToOfferType([json, Headers?] jsonPayload) returns @tainted Offer {
+    Offer offer = {};
+    json payload;
+    Headers? headers;
+    [payload,headers] = jsonPayload;
+    offer._rid = payload._rid != () ? payload._rid.toString() : EMPTY_STRING;
+    offer.id = payload.id != () ? payload.id.toString() : EMPTY_STRING;
+    offer.offerVersion = payload.offerVersion != () ? payload.offerVersion.toString() : EMPTY_STRING;
+    offer.offerType = payload.offerType != () ? payload.offerType.toString() : EMPTY_STRING;
+    offer.content = payload.content != () ? payload.content.toString() : EMPTY_STRING;
+    offer.'resource = payload.'resource != () ? payload.'resource.toString() : EMPTY_STRING;
+    offer.offerResourceId = payload.offerResourceId != () ? payload.offerResourceId.toString() : EMPTY_STRING;
+    if headers is Headers {
+        offer["reponseHeaders"] = headers;
+    }
+    return offer;
+}
+
+isolated function mapJsonToOfferListType([json, Headers?] jsonPayload) returns @tainted OfferList {
+    OfferList offerList = {};
+    json payload;
+    Headers? headers;
+    [payload,headers] = jsonPayload;
+    offerList._rid = payload._rid != () ? payload._rid.toString() : EMPTY_STRING;
+    offerList.offers = ConvertToOfferArray(<json[]>payload.Offers);
+    offerList._count = convertToInt(payload._count);
+    offerList["reponseHeaders"] = headers;
+    return offerList;
+}
+
 isolated function convertToDatabaseArray(json[] sourceDatabaseArrayJsonObject) returns @tainted Database[] {
     Database[] databases = [];
     int i = 0;
@@ -349,4 +440,34 @@ isolated function ConvertToTriggerArray(json[] sourceTriggerArrayJsonObject) ret
         i = i + 1;
     }
     return triggers;
+}
+
+isolated function ConvertToUserArray(json[] sourceTriggerArrayJsonObject) returns @tainted User[] { 
+    User[] users = [];
+    int i = 0;
+    foreach json user in sourceTriggerArrayJsonObject { 
+        users[i] = mapJsonToUserType([user,()]);
+        i = i + 1;
+    }
+    return users;
+}
+
+isolated function ConvertToPermissionArray(json[] sourcePermissionArrayJsonObject) returns @tainted Permission[] { 
+    Permission[] permissions = [];
+    int i = 0;
+    foreach json permission in sourcePermissionArrayJsonObject { 
+        permissions[i] = mapJsonToPermissionType([permission,()]);
+        i = i + 1;
+    }
+    return permissions;
+}
+
+isolated function ConvertToOfferArray(json[] sourceOfferArrayJsonObject) returns @tainted Offer[] { 
+    Offer[] offers = [];
+    int i = 0;
+    foreach json offer in sourceOfferArrayJsonObject { 
+        offers[i] = mapJsonToOfferType([offer,()]);
+        i = i + 1;
+    }
+    return offers;
 }
