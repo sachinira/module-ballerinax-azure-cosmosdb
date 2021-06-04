@@ -40,7 +40,7 @@ jobs:
               uses: ballerina-platform/ballerina-action/@nightly
               with:
                   args:
-                      build -c ./cosmosdb
+                      build -c --skip-tests ./cosmosdb
               env:
                 JAVA_HOME: /usr/lib/jvm/default-jvm
                 BASE_URL: ${{ secrets.BASE_URL }}
